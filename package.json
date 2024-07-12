@@ -1,0 +1,28 @@
+{
+  "name": "test07",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build:prod": "vite build",
+    "build:stage": "vite build --mode staging",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "axios": "^1.7.2",
+    "element-plus": "^2.7.6",
+    "less": "^4.2.0",
+    "vue": "^3.4.29",
+    "vue-router": "^4.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.5",
+    "pinia": "^2.1.7",
+    "unplugin-auto-import": "^0.17.6",
+    "unplugin-element-plus": "^0.8.0",
+    "unplugin-vue-components": "^0.27.2",
+    "vite": "^5.3.1"
+  }
+}
