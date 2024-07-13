@@ -73,9 +73,11 @@
 </template>
 
 <script setup lang="js">
-    import {ref, watch} from 'vue'
+    import {ref, watch, getCurrentInstance} from 'vue'
     import service from '../api/request';
     import { ElMessage } from 'element-plus'
+
+    const {proxy} = getCurrentInstance()
 
     const getImageUrl = (user) => {
         return new URL(`../assets/images/${user}.png`, import.meta.url).href
@@ -97,42 +99,16 @@
     const indeterminate = ref(false)
 
     async function getAlbums() {
-        try {
-            const response = await service.get(
-                '/album', 
-                {params: {
-                    artists: JSON.stringify(artists.value)
-                }}
-            );
-            if (response.data.code === '200') {
-                tableData.value = response.data.data
-            } else {
-                ElMessage.error(response.data.message)
-            }
-        } catch (error) {
-            ElMessage.error(error)
-        }
+        const {data} = await proxy.$api.getAlbums(artists.value)
+        tableData.value = data
     }
 
     async function getArtistsOptions(query) {
         if (query) {
             loading.value = true
-            try {
-                const response = await service.get(
-                    '/artists', 
-                    {params: {
-                        artist_key: query
-                    }}
-                );
-                if (response.data.code === '200') {
-                    loading.value = false
-                    options.value = response.data.data
-                } else {
-                    ElMessage.error(response.data.message)
-                }
-            } catch (error) {
-                ElMessage.error(error)
-            }
+            const {data} = await proxy.$api.getArtistsOptions(query)
+            loading.value = false
+            options.value = data
         } else {
             options.value = []
         }
