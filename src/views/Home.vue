@@ -54,7 +54,7 @@
                     :value="item"
                     />
                 </el-select>
-                <el-button class="button-wrap" type="primary" @click="getAlbums">查询</el-button>
+                <el-button class="button-wrap" type="primary" @click="getAlbumsCount();getAlbums()">查询</el-button>
             </el-row>
             <el-card style="min-width: 320px;" shadow="hover" class="user-table">
                 <el-table :data="tableData">
@@ -66,6 +66,18 @@
 
                     </el-table-column>
                 </el-table>
+                <el-pagination
+                v-model:current-page="page_index"
+                v-model:page-size="page_size"
+                :page-sizes="[10, 20, 30, 40]"
+                size="small"
+                hide-on-single-page
+                background
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="count"
+                @change ="getAlbums"
+                class="user-table"
+                />
             </el-card>
         </el-col>
     </el-row>
@@ -73,9 +85,8 @@
 </template>
 
 <script setup lang="js">
-    import {ref, watch, getCurrentInstance} from 'vue'
-    import service from '../api/request';
-    import { ElMessage } from 'element-plus'
+
+import {ref, watch, getCurrentInstance} from 'vue'
 
     const {proxy} = getCurrentInstance()
 
@@ -98,9 +109,22 @@
     const checkAll = ref(false)
     const indeterminate = ref(false)
 
+    const page_index = ref(1)
+    const page_size = ref(10)
+    const count = ref(0)
+
     async function getAlbums() {
-        const {data} = await proxy.$api.getAlbums(artists.value)
+        const {data} = await proxy.$api.getAlbums({
+            artists: artists.value,
+            page_index: page_index.value,
+            page_size: page_size.value
+        })
         tableData.value = data
+    }
+
+    async function getAlbumsCount() {
+        const {data} = await proxy.$api.getAlbumsCount(artists.value)
+        count.value = data
     }
 
     async function getArtistsOptions(query) {
