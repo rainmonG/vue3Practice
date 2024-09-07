@@ -1,20 +1,20 @@
-// 整个项目API同意管理
+// 整个项目API统一管理
 
 import request from "./request";
 
 // 请求首页左侧表格数据
 
 export default {
-    
-       getArtistsOptions(artist_key='') {
-            return request({
-                url: `/artists_option/${artist_key}`, 
-            });
-        },
+
+    getArtistsOptions(artist_key = '') {
+        return request({
+            url: `/artists_option/${artist_key}`,
+        });
+    },
 
     getAlbums(conditions) {
         return request({
-            url: '/albums_query', 
+            url: '/albums_query',
             method: 'post',
             data: {
                 artists: conditions.artists,
@@ -26,7 +26,7 @@ export default {
 
     getAlbumsCount(artists) {
         return request({
-            url: '/albums_count', 
+            url: '/albums_count',
             method: 'post',
             data: {
                 artists: artists,
@@ -34,4 +34,11 @@ export default {
         })
     },
 
+    insertAlbum(info) {
+        return request({
+            url: '/albums',
+            method: 'post',
+            data: info
+        })
+    }
 }

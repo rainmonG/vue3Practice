@@ -55,6 +55,7 @@
                     />
                 </el-select>
                 <el-button class="button-wrap" type="primary" @click="getAlbumsCount();getAlbums()">查询</el-button>
+                <el-button class="button-wrap" type="primary" @click="insertFormVisible = true">新增</el-button>
             </el-row>
             <el-card style="min-width: 320px;" shadow="hover" class="user-table">
                 <el-table :data="tableData">
@@ -82,11 +83,36 @@
         </el-col>
     </el-row>
   </div>
+
+  <!-- 弹出的页面内容 -->
+  <el-dialog v-model="insertFormVisible" title="新增作品" draggable overflow >
+    <el-form :model="form" ref="ruleFormRef">
+      <el-form-item label="作品" :required="true" prop="title">
+        <el-input v-model="form.title" placeholder="输入作品名称" autocomplete="false"/>
+      </el-form-item>
+      <el-form-item label="作者" :required="true" prop="artist">
+        <el-input v-model="form.artist" placeholder="输入作者姓名" />
+      </el-form-item>
+      <el-form-item label="价格" :required="true" prop="price">
+        <el-input v-model="form.price" placeholder="输入价格" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="insertFormVisible = false;ruleFormRef.resetFields()">取消</el-button>
+        <el-button type="primary" @click="insertItem(ruleFormRef)">
+          确定
+        </el-button>
+      </div>
+    </template>
+</el-dialog>
+
 </template>
 
 <script setup lang="js">
 
-import {ref, watch, getCurrentInstance} from 'vue'
+import {ref, watch, getCurrentInstance, reactive} from 'vue'
+import { ElMessage } from "element-plus";
 
     const {proxy} = getCurrentInstance()
 
@@ -154,6 +180,36 @@ import {ref, watch, getCurrentInstance} from 'vue'
         artists.value = []
     }
     }
+
+    const ruleFormRef = ref()
+    const form = reactive({
+        'title': '',
+        'artist': '',
+        'price': ''
+    })
+    const insertFormVisible = ref(false)
+    const insertItem = async (formEl) => {
+        if (!formEl) return
+        const check = await formEl.validate( (valid) => {
+            if (!valid) {
+                ElMessage('填写不规范')
+                return 0
+            } 
+            return 1   
+        }, )
+        if (check) {
+        const {code, message} = await proxy.$api.insertAlbum(form)
+        if (code === '200') {
+            ElMessage({
+                message: message,
+                type: 'success',
+            })   
+            formEl.resetFields()
+            insertFormVisible.value = false
+        }
+        }
+    }
+
 </script>
 
 <style scoped lang="less">
