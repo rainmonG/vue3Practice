@@ -17,7 +17,6 @@ export default {
             url: '/albums_query', 
             method: 'post',
             data: {
-                // artists: JSON.stringify(conditions.artists),
                 artists: conditions.artists,
                 page_index: conditions.page_index,
                 page_size: conditions.page_size
@@ -30,7 +29,6 @@ export default {
             url: '/albums_count', 
             method: 'post',
             data: {
-                // artists: JSON.stringify(artists),
                 artists: artists,
             }
         })
