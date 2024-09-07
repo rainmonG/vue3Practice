@@ -6,21 +6,19 @@ import request from "./request";
 
 export default {
     
-       getArtistsOptions(query) {
+       getArtistsOptions(artist_key='') {
             return request({
-                url: '/artists_option', 
-                params: {
-                    artist_key: query
-                }
+                url: `/artists_option/${artist_key}`, 
             });
         },
 
     getAlbums(conditions) {
         return request({
-            url: '/albums', 
-            method: 'get',
-            params: {
-                artists: JSON.stringify(conditions.artists),
+            url: '/albums_query', 
+            method: 'post',
+            data: {
+                // artists: JSON.stringify(conditions.artists),
+                artists: conditions.artists,
                 page_index: conditions.page_index,
                 page_size: conditions.page_size
             }
@@ -30,9 +28,10 @@ export default {
     getAlbumsCount(artists) {
         return request({
             url: '/albums_count', 
-            method: 'get',
-            params: {
-                artists: JSON.stringify(artists)
+            method: 'post',
+            data: {
+                // artists: JSON.stringify(artists),
+                artists: artists,
             }
         })
     },

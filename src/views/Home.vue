@@ -128,14 +128,10 @@ import {ref, watch, getCurrentInstance} from 'vue'
     }
 
     async function getArtistsOptions(query) {
-        if (query) {
-            loading.value = true
-            const {data} = await proxy.$api.getArtistsOptions(query)
-            loading.value = false
-            options.value = data
-        } else {
-            options.value = []
-        }
+        loading.value = true
+        const {data} = await proxy.$api.getArtistsOptions(query)
+        loading.value = false
+        options.value = data
     }
 
     watch(artists, (val) => {
