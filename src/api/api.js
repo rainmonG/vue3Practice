@@ -40,5 +40,14 @@ export default {
             method: 'post',
             data: info
         })
-    }
+    },
+
+    deleteAlbums(ids) {
+        return request({
+            url: '/albums_delete',
+            method: 'post',
+            data: {ids: ids}
+        })
+    },
+
 }
