@@ -50,4 +50,9 @@ export default {
         })
     },
 
+    getTop5Artists() {
+        return request({
+            url: '/artists_top5'
+        })
+    }
 }

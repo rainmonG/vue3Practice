@@ -7,7 +7,7 @@
 <template>
     <div>
         <el-row class="home" :gutter="20">
-            <el-col :span="8" style="margin-top: 20px;">
+            <el-col :span="11" style="margin-top: 20px;">
                 <el-card style="min-width: 320px;" shadow="hover">
                     <div class="user">
                         <img :src="getImageUrl('user')" class="user" />
@@ -49,6 +49,24 @@
                         layout="total, sizes, prev, pager, next, jumper" :total="count" @change="getAlbums"
                         class="user-table" />
                 </el-card>
+            </el-col>
+            <el-col :span="13" style="margin-top: 20px;">
+                <el-space direction="vertical" wrap>
+                    <el-text type="info" size="large">TOP 5 Artists</el-text>
+                    <el-card style="min-width: 500px;" shadow="hover" v-for="row in countData" :key="row.artist">
+                        <el-row>
+                            <el-col :span="2">
+                                <el-icon :color="row.color">
+                                <component class="icons" is="management"></component>
+                            </el-icon>
+                            </el-col>
+                            <el-col :span="12"><el-text>作者：{{ row.artist }}</el-text></el-col>
+                            <el-col :span="5"><el-text>作品数：{{ row.count }}</el-text></el-col>
+                            <el-col :span="5"><el-text>均价：{{ row.avg_price }}</el-text></el-col>
+                        </el-row>
+                    </el-card>
+                </el-space>
+
             </el-col>
         </el-row>
     </div>
@@ -174,6 +192,9 @@ const insertItem = async (formEl) => {
                 type: 'success',
             })
             formEl.resetFields()
+            await getAlbums()
+            await getAlbumsCount()
+            await getCountData()
             insertFormVisible.value = false
         }
     }
@@ -204,6 +225,7 @@ const deleteCheck = async () => {
                         })
                         await getAlbums()
                         await getAlbumsCount()
+                        await getCountData()
                         instance.confirmButtonLoading = false
                         done()
                     }
@@ -218,6 +240,12 @@ const deleteCheck = async () => {
     }
 }
 
+const countData = ref()
+const getCountData = async () => {
+    const {data} = await proxy.$api.getTop5Artists()
+    countData.value = data
+}
+getCountData()
 
 </script>
 
