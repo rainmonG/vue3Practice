@@ -28,9 +28,7 @@ export default {
         return request({
             url: '/albums_count',
             method: 'post',
-            data: {
-                artists: artists,
-            }
+            data: { artists }
         })
     },
 
@@ -46,7 +44,7 @@ export default {
         return request({
             url: '/albums_delete',
             method: 'post',
-            data: {ids: ids}
+            data: { ids }
         })
     },
 
