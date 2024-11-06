@@ -24,7 +24,7 @@
                 <el-row class="user-table">
                     <el-text>作者：</el-text>
                     <el-select v-model="artists" multiple filterable clearable remote reserve-keyword
-                        placeholder="输入作者姓名关键字" remote-show-suffix :remote-method="getArtistsOptions" :loading="loading"
+                        placeholder="输入作者姓名关键字" remote-show-suffix :remote-method="queryArtistsOptions" :loading="loading"
                         collapse-tags :max-collapse-tags="3" style="width: 240px">
                         <template #header>
                             <el-checkbox v-model="checkAll" :indeterminate="indeterminate" @change="handleCheckAll">
@@ -33,7 +33,7 @@
                         </template>
                         <el-option v-for="item in options" :key="item" :label="item" :value="item" />
                     </el-select>
-                    <el-button class="button-wrap" type="primary" @click="getAlbumsCount(); getAlbums()">查询</el-button>
+                    <el-button class="button-wrap" type="primary" @click="queryAlbumsCount(); queryAlbums()">查询</el-button>
                     <el-button class="button-wrap" type="primary" @click="insertFormVisible = true">新增</el-button>
                     <el-button class="button-wrap" type="danger" @click="deleteCheck">删除</el-button>
                 </el-row>
@@ -46,7 +46,7 @@
                     </el-table>
                     <el-pagination v-model:current-page="page_index" v-model:page-size="page_size"
                         :page-sizes="[10, 20, 30, 40]" size="small" hide-on-single-page background
-                        layout="total, sizes, prev, pager, next, jumper" :total="count" @change="getAlbums"
+                        layout="total, sizes, prev, pager, next, jumper" :total="count" @change="queryAlbums"
                         class="user-table" />
                 </el-card>
             </el-col>
@@ -98,10 +98,9 @@
 
 <script setup lang="js">
 
-import { ref, watch, getCurrentInstance, reactive } from 'vue'
-import { ElMessage, ElMessageBox } from "element-plus";
-
-const { proxy } = getCurrentInstance()
+import { ref, watch, reactive } from 'vue'
+import { ElMessage, ElMessageBox } from "element-plus"
+import home_api from "@/api/home_api.js"
 
 const getImageUrl = (user) => {
     return new URL(`../assets/images/${user}.png`, import.meta.url).href
@@ -126,8 +125,8 @@ const page_index = ref(1)
 const page_size = ref(10)
 const count = ref(0)
 
-async function getAlbums() {
-    const { data } = await proxy.$api.getAlbums({
+async function queryAlbums() {
+    const { data } = await home_api.getAlbums({
         artists: artists.value,
         page_index: page_index.value,
         page_size: page_size.value
@@ -135,14 +134,14 @@ async function getAlbums() {
     tableData.value = data
 }
 
-async function getAlbumsCount() {
-    const { data } = await proxy.$api.getAlbumsCount(artists.value)
+async function queryAlbumsCount() {
+    const { data } = await home_api.getAlbumsCount(artists.value)
     count.value = data
 }
 
-async function getArtistsOptions(query) {
+async function queryArtistsOptions(query) {
     loading.value = true
-    const { data } = await proxy.$api.getArtistsOptions(query)
+    const { data } = await home_api.getArtistsOptions(query)
     loading.value = false
     options.value = data
 }
@@ -185,15 +184,15 @@ const insertItem = async (formEl) => {
         return 1
     },)
     if (check) {
-        const { code, message } = await proxy.$api.insertAlbum(form)
+        const { code, message } = await home_api.insertAlbum(form)
         if (code === '200') {
             ElMessage({
                 message: message,
                 type: 'success',
             })
             formEl.resetFields()
-            await getAlbums()
-            await getAlbumsCount()
+            await queryAlbums()
+            await queryAlbumsCount()
             await getCountData()
             insertFormVisible.value = false
         }
@@ -217,14 +216,14 @@ const deleteCheck = async () => {
                     selection.forEach(el => {
                         ids.push(el.id)
                     })
-                    const { code, message } = await proxy.$api.deleteAlbums(ids)
+                    const { code, message } = await home_api.deleteAlbums(ids)
                     if (code === '200') {
                         ElMessage({
                             message: message,
                             type: 'success',
                         })
-                        await getAlbums()
-                        await getAlbumsCount()
+                        await queryAlbums()
+                        await queryAlbumsCount()
                         await getCountData()
                         instance.confirmButtonLoading = false
                         done()
@@ -242,7 +241,7 @@ const deleteCheck = async () => {
 
 const countData = ref()
 const getCountData = async () => {
-    const {data} = await proxy.$api.getTop5Artists()
+    const {data} = await home_api.getTop5Artists()
     countData.value = data
 }
 getCountData()

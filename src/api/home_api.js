@@ -4,7 +4,7 @@ import request from "./request";
 
 // 请求首页左侧表格数据
 
-export default {
+const home_api = {
 
     getArtistsOptions(artist_key = '') {
         return request({
@@ -54,3 +54,5 @@ export default {
         })
     }
 }
+
+export default home_api
